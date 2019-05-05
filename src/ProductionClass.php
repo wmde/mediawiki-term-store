@@ -1,12 +1,10 @@
 <?php
 
-declare( strict_types = 1 );
-
-namespace Such\NewProject;
+namespace Wikibase\TermStore\MediaWiki;
 
 class ProductionClass {
 
-	public static function getTrue(): bool {
+	public static function getTrue() {
 		return true;
 	}
 

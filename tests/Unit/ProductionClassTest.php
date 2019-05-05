@@ -1,15 +1,10 @@
 <?php
 
-declare( strict_types = 1 );
-
-namespace Such\NewProject\Tests\Unit;
+namespace Wikibase\TermStore\MediaWiki\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Such\NewProject\ProductionClass;
+use Wikibase\TermStore\MediaWiki\ProductionClass;
 
-/**
- * @covers \Such\NewProject\ProductionClass
- */
 class ProductionClassTest extends TestCase {
 
 	public function testGetTrue() {
