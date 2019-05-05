@@ -30,6 +30,10 @@ Start by installing the project dependencies by executing
 
     composer update
 
+To get IDE autocompletion for MediaWiki, you can place a copy of MediaWiki inside the gitignored `mediawiki` directory.
+
+    git clone https://github.com/wikimedia/mediawiki.git
+
 You can run the style checks by executing
 
     make cs
