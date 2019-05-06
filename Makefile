@@ -2,14 +2,14 @@
 
 DEFAULT_GOAL := check
 
-check: cs && test
+check: cs test
 
 test: phpunit
 
 cs: phpcs
 
 phpunit:
-	./vendor/bin/phpunit
+	./vendor/bin/phpunit  --exclude-group MediaWikiCore
 
 phpcs:
 	./vendor/bin/phpcs -p -s
