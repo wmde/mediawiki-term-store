@@ -21,7 +21,7 @@ cd vendor
 mkdir wikibase
 cd wikibase
 
-cp -r $originalDirectory mediawiki-term-store
+ln -s $originalDirectory mediawiki-term-store
 
 cd mediawiki-term-store
 composer install
