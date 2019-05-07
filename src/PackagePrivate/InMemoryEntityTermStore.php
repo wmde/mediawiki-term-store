@@ -32,7 +32,7 @@ class InMemoryEntityTermStore implements EntityTermStore {
 	 *
 	 * @return bool
 	 */
-	public function hasTerms( EntityId $entityId, array $termsArray ) {
+	public function hasExactTerms( EntityId $entityId, array $termsArray ) {
 		if ( !isset( $this->entityTerms[$entityId->getSerialization()] ) ) {
 			return false;
 		}
@@ -42,6 +42,8 @@ class InMemoryEntityTermStore implements EntityTermStore {
 
 	/**
 	 * Check that given entity id has no terms stored
+	 *
+	 * @return bool
 	 */
 	public function hasNoTerms( EntityId $entityId ) {
 		return !isset( $this->entityTerms[$entityId->getSerialization()] );

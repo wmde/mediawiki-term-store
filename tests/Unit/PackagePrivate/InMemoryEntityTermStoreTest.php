@@ -15,7 +15,7 @@ class InMemoryEntityTermStoreTest extends TestCase {
 		$termStore->setTerms( $entityId, $termsArray );
 
 		$this->assertTrue(
-			$termStore->hasTerms( $entityId, $termsArray )
+			$termStore->hasExactTerms( $entityId, $termsArray )
 		);
 	}
 
@@ -24,7 +24,7 @@ class InMemoryEntityTermStoreTest extends TestCase {
 		$termStore = new InMemoryEntityTermStore();
 
 		$this->assertFalse(
-			$termStore->hasTerms( $entityId, $termsArray )
+			$termStore->hasExactTerms( $entityId, $termsArray )
 		);
 	}
 
@@ -36,7 +36,7 @@ class InMemoryEntityTermStoreTest extends TestCase {
 		$termStore->unsetTerms( $entityId );
 
 		$this->assertFalse(
-			$termStore->hasTerms( $entityId, $termsArray )
+			$termStore->hasExactTerms( $entityId, $termsArray )
 		);
 	}
 
