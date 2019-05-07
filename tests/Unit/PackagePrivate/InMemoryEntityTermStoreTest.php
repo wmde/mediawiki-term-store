@@ -8,7 +8,7 @@ use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryEntityTermStore;
 
 class InMemoryEntityTermStoreTest extends TestCase {
 
-	public function testHasTermsReturnsTrueWhenTermsHaveBeenSet() {
+	public function testHasExactTermsReturnsTrueWhenTermsHaveBeenSet() {
 		list( $entityId, $termsArray ) = $this->getEntityIdAndTermsArray();
 		$termStore = new InMemoryEntityTermStore();
 
@@ -19,7 +19,7 @@ class InMemoryEntityTermStoreTest extends TestCase {
 		);
 	}
 
-	public function testHasTermsReturnsFalseWhenTermsNeverBeenSet() {
+	public function testHasExactTermsReturnsFalseWhenTermsNeverBeenSet() {
 		list( $entityId, $termsArray ) = $this->getEntityIdAndTermsArray();
 		$termStore = new InMemoryEntityTermStore();
 
@@ -28,7 +28,7 @@ class InMemoryEntityTermStoreTest extends TestCase {
 		);
 	}
 
-	public function testHasTermsReturnsFalseWhenTermsHaveBeenUnset() {
+	public function testHasExactTermsReturnsFalseWhenTermsHaveBeenUnset() {
 		list( $entityId, $termsArray ) = $this->getEntityIdAndTermsArray();
 		$termStore = new InMemoryEntityTermStore();
 
