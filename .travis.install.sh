@@ -4,13 +4,14 @@ set -x
 
 originalDirectory=$(pwd)
 
-cd ..
-
 wget https://github.com/wikimedia/mediawiki-core/archive/$MW.tar.gz
 tar -zxf $MW.tar.gz
-mv mediawiki-$MW phase3
+rm $MW.tar.gz
+mv mediawiki-$MW .mediawiki
 
-cd phase3
+cd .mediawiki
+
+mediawikiDirectory=$(pwd)
 
 composer install
 
@@ -26,7 +27,7 @@ ln -s $originalDirectory mediawiki-term-store
 cd mediawiki-term-store
 composer install
 
-cd ../../..
+cd $mediawikiDirectory
 
 echo 'include_once( __DIR__ . "/vendor/wikibase/mediawiki-term-store/vendor/autoload.php" );' >> LocalSettings.php
 
