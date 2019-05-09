@@ -9,7 +9,7 @@ test: phpunit
 cs: phpcs
 
 phpunit:
-./vendor/bin/phpunit  --exclude-group TermStoreWithMediaWikiCore
+	./vendor/bin/phpunit --exclude-group TermStoreWithMediaWikiCore
 
 phpcs:
 	./vendor/bin/phpcs -p -s
