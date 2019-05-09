@@ -4,7 +4,7 @@
 [![Latest Stable Version](https://poser.pugx.org/wikibase/mediawiki-term-store/version.png)](https://packagist.org/packages/wikibase/mediawiki-term-store)
 [![Download count](https://poser.pugx.org/wikibase/mediawiki-term-store/d/total.png)](https://packagist.org/packages/wikibase/mediawiki-term-store)
 
-MediaWiki based implementation of [Wikibase TermStore](https://github.com/wmde/wikibase-term-store). 
+MediaWiki based implementation of [Wikibase TermStore](https://github.com/wmde/wikibase-term-store).
 
 ## Usage
 
@@ -36,12 +36,18 @@ To get IDE autocompletion for MediaWiki, you can place a copy of MediaWiki insid
 
 You can run the style checks by executing
 
-    make cs
-    
-Since the library depends on MediaWiki, you need to have a working MediaWiki
-installation to run the tests. You need these two steps to run the tests:
+    make cd
 
-* Load `vendor/autoload.php` of this library in your MediaWiki's `LocalSettings.php` file
-* Execute `maintenance/phpunit.php -c /path/to/this/lib/phpunit.xml.dist`
+## Testing
 
-For an example see the TravisCI setup (`.travis.yml` and `.travis.install.sh`)
+Unit tests that do not depend on mediawiki core can be simply run with
+
+	make test
+
+Unit tests that depend on mediawiki core must be in group 'MediaWikiCore' and can be run in the following way:
+
+	// execute once or only when you want to update mediawiki core version this library use to execute tests
+	MW=1.32.0 DBTYPE=sqlite make init_mw
+
+	// then to run unit tests, you can now execute
+	make test_mw
