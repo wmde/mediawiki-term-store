@@ -10,9 +10,9 @@ matrix:
       php: '7.0'
   fast_finish: true
 
-install: bash .travis.install.sh
+install: MW=1.32.0 DBTYPE=sqlite make init_mw
 
-script: ../phase3/tests/phpunit/phpunit.php -c ../phase3/vendor/wikibase/mediawiki-term-store/phpunit.xml.dist
+script: make test_mw
 
 cache:
   directories:
