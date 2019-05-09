@@ -10,7 +10,7 @@ matrix:
       php: '7.0'
   fast_finish: true
 
-install: MW=1.32.0 DBTYPE=sqlite make init_mw
+install: make init_mw
 
 script: make test_mw
 

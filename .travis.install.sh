@@ -13,9 +13,15 @@ cd .mediawiki
 
 mediawikiDirectory=$(pwd)
 
-composer install
+# composer hooks will fail due to some db access attempt, we do not care
+# about that and want to continue
+composer install || true
 
-mysql -e 'create database its_a_mw;'
+if [ $DBTYPE = 'mysql' ]
+then
+   mysql -u $MYSQL_USER -p$MYSQL_PASS -e 'create database its_a_mw;'
+fi
+
 php maintenance/install.php --dbtype $DBTYPE --dbuser root --dbname its_a_mw --dbpath $(pwd) --pass nyan TravisWiki admin --scriptpath /TravisWiki
 
 cd vendor
@@ -25,6 +31,7 @@ cd wikibase
 ln -s $originalDirectory mediawiki-term-store
 
 cd mediawiki-term-store
+
 composer install
 
 cd $mediawikiDirectory
