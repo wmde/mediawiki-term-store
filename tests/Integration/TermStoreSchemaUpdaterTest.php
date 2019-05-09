@@ -7,7 +7,7 @@ use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
 use Wikimedia\Rdbms\DatabaseSqlite;
 
 /**
- * @group MediaWikiCore
+ * @group TermStoreWithMediaWikiCore
  */
 class TermStoreSchemaUpdaterTest extends TestCase {
 
