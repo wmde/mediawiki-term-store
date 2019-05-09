@@ -36,7 +36,7 @@ To get IDE autocompletion for MediaWiki, you can place a copy of MediaWiki insid
 
 You can run the style checks by executing
 
-    make cd
+    make cs
 
 ## Testing
 
@@ -46,8 +46,8 @@ Unit tests that do not depend on mediawiki core can be simply run with
 
 Unit tests that depend on mediawiki core must be in group 'MediaWikiCore' and can be run in the following way:
 
-	// execute once or only when you want to update mediawiki core version this library use to execute tests
-	MW=1.32.0 DBTYPE=sqlite make init_mw
+	# execute once or only when you want to update mediawiki core version this library use to execute tests
+	MW=1.32.1 DBTYPE=sqlite make init_mw
 
-	// then to run unit tests, you can now execute
+	# then to run unit tests, you can now execute
 	make test_mw
