@@ -10,16 +10,10 @@ use Wikibase\DataModel\Entity\EntityId;
 class InMemoryEntityTermStore implements EntityTermStore {
 	private $entityTerms = [];
 
-	/**
-	 * @inheritDoc
-	 */
 	public function setTerms( EntityId $entityId, array $termsArray ) {
 		$this->entityTerms[$entityId->getSerialization()] = $termsArray;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function unsetTerms( EntityId $entityId ) {
 		unset( $this->entityTerms[$entityId->getSerialization()] );
 	}
