@@ -17,12 +17,6 @@ class TermStoreSchemaUpdater {
 	}
 
 	private function updateSchema() {
-		if ( !$this->updater->tableExists( 'wbt_item_terms' ) ) {
-			$this->createSchema();
-		}
-	}
-
-	private function createSchema() {
 		$this->updater->addExtensionTable(
 			'wbt_item_terms',
 			__DIR__ . '/PackagePrivate/AddNormalizedTermsTablesDDL.sql'
