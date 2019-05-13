@@ -7,9 +7,6 @@ class InMemoryTermIdsAcquirer implements TermIdsAcquirer {
 	private $terms = [];
 	private $lastId = 0;
 
-	/**
-	 * @inheritDoc
-	 */
 	public function acquireTermIds( array $termsArray ): array {
 		$ids = [];
 
