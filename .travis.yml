@@ -15,9 +15,7 @@ matrix:
 install: make init_mw
 
 script:
-  - make cs
-  - make test
-  - make test_mw
+  - make ci
 
 cache:
   directories:
