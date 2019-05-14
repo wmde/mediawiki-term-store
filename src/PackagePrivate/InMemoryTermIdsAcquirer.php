@@ -46,4 +46,8 @@ class InMemoryTermIdsAcquirer implements TermIdsAcquirer, TermCleaner {
 		}
 	}
 
+	public function hasTerms() {
+		return $this->terms !== [];
+	}
+
 }

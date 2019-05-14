@@ -4,7 +4,6 @@ namespace Wikibase\TermStore\MediaWiki\Tests\Unit\PackagePrivate;
 
 use PHPUnit\Framework\TestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer;
-use Wikimedia\TestingAccessWrapper;
 
 /**
  * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer
@@ -124,7 +123,7 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	public function testCleanTerms_completelyCleansArray() {
 		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
 
-		$ids1 = $termIdsAcquirer->acquireTermIds( [
+		$ids = $termIdsAcquirer->acquireTermIds( [
 			'label' => [
 				'en' => 'the label',
 				'de' => 'die Bezeichnung',
@@ -132,15 +131,12 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 			'alias' => [
 				'en' => [ 'alias', 'another' ],
 			],
-		] );
-		$ids2 = $termIdsAcquirer->acquireTermIds( [
-			'label' => [ 'en' => 'the label' ],
 			'description' => [ 'en' => 'the description' ],
 		] );
 
-		$termIdsAcquirer->cleanTerms( array_merge( $ids1, $ids2 ) );
+		$termIdsAcquirer->cleanTerms( $ids );
 
-		$this->assertEmpty( TestingAccessWrapper::newFromObject( $termIdsAcquirer )->terms );
+		$this->assertFalse( $termIdsAcquirer->hasTerms() );
 	}
 
 	public function testCleanTerms_keepsOtherIds() {
