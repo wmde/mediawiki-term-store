@@ -32,7 +32,7 @@ ln -s "$originalDirectory" mediawiki-term-store
 
 cd mediawiki-term-store
 
-composer instal
+composer install
 
 cd "$mediawikiDirectory"
 

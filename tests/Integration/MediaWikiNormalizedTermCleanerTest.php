@@ -7,20 +7,10 @@ use Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
-// Evil hack because we don’t always have MediaWikiTestCase and `class extends MediaWikiTestCase`
-// crashes even if (because of the special group) we’re not actually going to run the test.
-// This also requires us to disable the PSR1.Files.SideEffects.FoundWithSymbols warning, which
-// otherwise complains about mixing declarations with procedural code; since that warning is
-// reported on line 1, not on the return statement, we have to disable it up there instead of here.
-if ( !class_exists( MediaWikiTestCase::class ) ) {
-	return;
-}
-
 /**
  * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner
  *
  * @group Database
- * @group TermStoreWithMediaWikiCore
  *
  * @license GPL-2.0-or-later
  */

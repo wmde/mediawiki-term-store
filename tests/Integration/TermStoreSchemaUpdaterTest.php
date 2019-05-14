@@ -6,9 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
 use Wikimedia\Rdbms\DatabaseSqlite;
 
-/**
- * @group TermStoreWithMediaWikiCore
- */
 class TermStoreSchemaUpdaterTest extends TestCase {
 
 	public function testUpdaterCreatesTables() {
