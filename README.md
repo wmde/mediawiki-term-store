@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/wmde/mediawiki-term-store.svg?branch=master)](https://travis-ci.org/wmde/mediawiki-term-store)
 [![Latest Stable Version](https://poser.pugx.org/wikibase/mediawiki-term-store/version.png)](https://packagist.org/packages/wikibase/mediawiki-term-store)
 [![Download count](https://poser.pugx.org/wikibase/mediawiki-term-store/d/total.png)](https://packagist.org/packages/wikibase/mediawiki-term-store)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/wmde/mediawiki-term-store/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/wmde/mediawiki-term-store/?branch=master)
 
 MediaWiki based implementation of [Wikibase TermStore](https://github.com/wmde/wikibase-term-store).
 
