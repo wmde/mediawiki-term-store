@@ -6,7 +6,10 @@ use PHPUnit\Framework\TestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer;
 use Wikimedia\TestingAccessWrapper;
 
-class InMemeoryTermIdsAcquirerTest extends TestCase {
+/**
+ * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer
+ */
+class InMemoryTermIdsAcquirerTest extends TestCase {
 
 	public function testAcquiresUniqueIdsForNonExistingTerms() {
 		$termsIdsAcquirer = new InMemoryTermIdsAcquirer();
