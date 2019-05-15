@@ -5,7 +5,10 @@ namespace Wikibase\TermStore\MediaWiki\Tests\Unit\PackagePrivate;
 use PHPUnit\Framework\TestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer;
 
-class InMemeoryTermIdsAcquirerTest extends TestCase {
+/**
+ * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer
+ */
+class InMemoryTermIdsAcquirerTest extends TestCase {
 
 	public function testAcquiresUniqueIdsForNonExistingTerms() {
 		$termsIdsAcquirer = new InMemoryTermIdsAcquirer();
