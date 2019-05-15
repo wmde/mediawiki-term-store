@@ -1,4 +1,4 @@
-.PHONY: ci test phpunit cs stan covers init_mw test_mw phpunit_mw ci
+.PHONY: test phpunit cs stan covers init_mw test_mw phpunit_mw ci
 
 DEFAULT_GOAL := check
 
