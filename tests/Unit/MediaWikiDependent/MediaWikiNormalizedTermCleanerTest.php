@@ -1,6 +1,6 @@
 <?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols -- see evil hack below
 
-namespace Wikibase\TermStore\MediaWiki\Tests\Integration;
+namespace Wikibase\TermStore\MediaWiki\Tests\Unit\MediaWikiDependent;
 
 use MediaWikiTestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner;
