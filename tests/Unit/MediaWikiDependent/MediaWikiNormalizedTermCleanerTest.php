@@ -1,9 +1,10 @@
 <?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols -- see evil hack below
 
-namespace Wikibase\TermStore\MediaWiki\Tests\Integration;
+namespace Wikibase\TermStore\MediaWiki\Tests\Unit\MediaWikiDependent;
 
 use MediaWikiTestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner;
+use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
@@ -26,7 +27,7 @@ class MediaWikiNormalizedTermCleanerTest extends MediaWikiTestCase {
 
 	protected function getSchemaOverrides( IMaintainableDatabase $db ) {
 		return [
-			'scripts' => [ __DIR__ . '/../../src/PackagePrivate/AddNormalizedTermsTablesDDL.sql' ],
+			'scripts' => [ TermStoreSchemaUpdater::getDdlSqlFilePath() ],
 			'create' => [
 				'wbt_type',
 				'wbt_text',
