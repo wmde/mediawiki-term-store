@@ -26,6 +26,6 @@ init_mw:
 test_mw: phpunit_mw
 
 phpunit_mw:
-	php .mediawiki/tests/phpunit/phpunit.php -c .mediawiki/vendor/wikibase/mediawiki-term-store/phpunit.xml.dist ./tests/Integration
+	php .mediawiki/tests/phpunit/phpunit.php -c .mediawiki/vendor/wikibase/mediawiki-term-store/phpunit.xml.dist ./tests/Unit/MediaWikiDependent
 
 ci: check test_mw
