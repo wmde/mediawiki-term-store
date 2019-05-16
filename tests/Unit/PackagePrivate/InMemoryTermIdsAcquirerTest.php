@@ -146,32 +146,26 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	public function testCleanTerms_keepsOtherIds() {
 		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
 
-		$ids1 = $termIdsAcquirer->acquireTermIds( [
+		$acquiredIds = $termIdsAcquirer->acquireTermIds( [
 			'label' => [
-				'en' => 'the label',
-				'de' => 'die Bezeichnung',
+				'en' => 'id 1',
+				'de' => 'id 2',
 			],
 			'alias' => [
-				'en' => [ 'alias', 'another' ],
+				'en' => [ 'id 3' ],
 			],
-		] );
-		$ids2 = $termIdsAcquirer->acquireTermIds( [
-			'label' => [ 'en' => 'the label' ],
-			'description' => [ 'en' => 'the description' ],
+			'description' => [ 'en' => 'id 4' ],
 		] );
 
-		// Clean up terms related to the first set of IDs,
-		// while keeping the second set of IDs intact.
-		// (Knowing that the intersection of $ids1 and $ids2 should not be cleaned
-		// is the caller’s responsibility, not the cleaner’s; we do it via array_diff.)
-		$idsToClean = array_diff( $ids1, $ids2 );
-		$termIdsAcquirer->cleanTerms( $idsToClean );
+		$termIdsAcquirer->cleanTerms( [ $acquiredIds[1], $acquiredIds[2] ] );
 
-		$ids3 = $termIdsAcquirer->acquireTermIds( [
-			'label' => [ 'en' => 'the label' ],
-			'description' => [ 'en' => 'the description' ],
-		] );
-		$this->assertSame( $ids2, $ids3 );
+		$this->assertSame(
+			[ $acquiredIds[0], $acquiredIds[3] ],
+			$termIdsAcquirer->acquireTermIds( [
+				'label' => [ 'en' => 'id 1' ],
+				'description' => [ 'en' => 'id 4' ],
+			] )
+		);
 	}
 
 }
