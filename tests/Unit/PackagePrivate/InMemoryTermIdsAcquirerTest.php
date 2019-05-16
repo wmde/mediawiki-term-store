@@ -146,7 +146,7 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	public function testCleanTerms_keepsOtherIds() {
 		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
 
-		$termIdsAcquirer->acquireTermIds( [
+		$acquiredIds = $termIdsAcquirer->acquireTermIds( [
 			'label' => [
 				'en' => 'id 1',
 				'de' => 'id 2',
@@ -157,10 +157,10 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 			'description' => [ 'en' => 'id 4' ],
 		] );
 
-		$termIdsAcquirer->cleanTerms( [ 2, 3 ] );
+		$termIdsAcquirer->cleanTerms( [ $acquiredIds[1], $acquiredIds[2] ] );
 
 		$this->assertSame(
-			[ 1, 4 ],
+			[ $acquiredIds[0], $acquiredIds[3] ],
 			$termIdsAcquirer->acquireTermIds( [
 				'label' => [ 'en' => 'id 1' ],
 				'description' => [ 'en' => 'id 4' ],

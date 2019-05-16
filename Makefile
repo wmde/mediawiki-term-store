@@ -1,4 +1,4 @@
-.PHONY: ci test phpunit cs stan covers init_mw test_mw phpunit_mw ci
+.PHONY: test phpunit cs covers init_mw test_mw phpunit_mw ci
 
 DEFAULT_GOAL := check
 
@@ -9,7 +9,7 @@ test: phpunit
 cs: phpcs
 
 phpunit:
-	./vendor/bin/phpunit --exclude-group TermStoreWithMediaWikiCore
+	./vendor/bin/phpunit
 
 phpcs:
 	./vendor/bin/phpcs -p -s
@@ -26,6 +26,6 @@ init_mw:
 test_mw: phpunit_mw
 
 phpunit_mw:
-	php .mediawiki/tests/phpunit/phpunit.php -c .mediawiki/vendor/wikibase/mediawiki-term-store/phpunit.xml.dist --group TermStoreWithMediaWikiCore
+	php .mediawiki/tests/phpunit/phpunit.php -c .mediawiki/vendor/wikibase/mediawiki-term-store/phpunit.xml.dist ./tests/Unit/MediaWikiDependent
 
 ci: check test_mw

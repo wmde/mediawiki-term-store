@@ -1,26 +1,17 @@
 <?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols -- see evil hack below
 
-namespace Wikibase\TermStore\MediaWiki\Tests\Integration;
+namespace Wikibase\TermStore\MediaWiki\Tests\Unit\MediaWikiDependent;
 
 use MediaWikiTestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner;
+use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IMaintainableDatabase;
-
-// Evil hack because we don’t always have MediaWikiTestCase and `class extends MediaWikiTestCase`
-// crashes even if (because of the special group) we’re not actually going to run the test.
-// This also requires us to disable the PSR1.Files.SideEffects.FoundWithSymbols warning, which
-// otherwise complains about mixing declarations with procedural code; since that warning is
-// reported on line 1, not on the return statement, we have to disable it up there instead of here.
-if ( !class_exists( MediaWikiTestCase::class ) ) {
-	return;
-}
 
 /**
  * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner
  *
  * @group Database
- * @group TermStoreWithMediaWikiCore
  *
  * @license GPL-2.0-or-later
  */
@@ -36,7 +27,7 @@ class MediaWikiNormalizedTermCleanerTest extends MediaWikiTestCase {
 
 	protected function getSchemaOverrides( IMaintainableDatabase $db ) {
 		return [
-			'scripts' => [ __DIR__ . '/../../src/PackagePrivate/AddNormalizedTermsTablesDDL.sql' ],
+			'scripts' => [ TermStoreSchemaUpdater::getDdlSqlFilePath() ],
 			'create' => [
 				'wbt_type',
 				'wbt_text',
