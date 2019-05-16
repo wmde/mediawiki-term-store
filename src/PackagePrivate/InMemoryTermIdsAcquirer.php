@@ -2,7 +2,7 @@
 
 namespace Wikibase\TermStore\MediaWiki\PackagePrivate;
 
-class InMemoryTermIdsAcquirer implements TermIdsAcquirer {
+class InMemoryTermIdsAcquirer implements TermIdsAcquirer, TermCleaner {
 
 	private $terms = [];
 	private $lastId = 0;
@@ -25,6 +25,25 @@ class InMemoryTermIdsAcquirer implements TermIdsAcquirer {
 		}
 
 		return $ids;
+	}
+
+	public function cleanTerms( array $termInLangIds ) {
+		$termInLangIdsAsKeys = array_flip( $termInLangIds );
+		foreach ( $this->terms as $type => &$termsOfType ) {
+			foreach ( $termsOfType as $lang => &$termsOfLang ) {
+				foreach ( $termsOfLang as $term => $id ) {
+					if ( array_key_exists( $id, $termInLangIdsAsKeys ) ) {
+						unset( $termsOfLang[$term] );
+					}
+				}
+				if ( $termsOfLang === [] ) {
+					unset( $termsOfType[$lang] );
+				}
+			}
+			if ( $termsOfType === [] ) {
+				unset( $this->terms[$type] );
+			}
+		}
 	}
 
 }

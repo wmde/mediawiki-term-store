@@ -15,7 +15,7 @@ use Wikimedia\Rdbms\ILoadBalancer;
  *
  * @license GPL-2.0-or-later
  */
-class MediaWikiNormalizedTermCleaner {
+class MediaWikiNormalizedTermCleaner implements TermCleaner {
 
 	/** @var ILoadBalancer */
 	private $lb;
@@ -41,6 +41,11 @@ class MediaWikiNormalizedTermCleaner {
 	/**
 	 * Delete the specified term_in_lang rows from the database,
 	 * as well as any text_in_lang and text rows that are now unused.
+	 *
+	 * It is the caller’s responsibility ensure
+	 * that the term_in_lang rows are no longer referenced anywhere;
+	 * on the other hand, this class takes care that text_in_lang and text rows
+	 * used by other term_in_lang rows are not removed.
 	 *
 	 * @param int[] $termInLangIds
 	 */
