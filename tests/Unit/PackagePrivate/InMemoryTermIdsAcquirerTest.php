@@ -98,7 +98,7 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	public function testCleanTerms_doesNotReuseIds() {
 		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
 
-		$ids1 = $termIdsAcquirer->acquireTermIds( [
+		$originalIds = $termIdsAcquirer->acquireTermIds( [
 			'label' => [
 				'en' => 'the label',
 				'de' => 'die Bezeichnung',
@@ -106,19 +106,18 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 			'alias' => [
 				'en' => [ 'alias', 'another' ],
 			],
+			'description' => [ 'en' => 'the description' ],
 		] );
-		$ids2 = $termIdsAcquirer->acquireTermIds( [
+
+		$termIdsAcquirer->cleanTerms( $originalIds );
+
+		$newIds = $termIdsAcquirer->acquireTermIds( [
 			'label' => [ 'en' => 'the label' ],
 			'description' => [ 'en' => 'the description' ],
 		] );
 
-		$termIdsAcquirer->cleanTerms( array_merge( $ids1, $ids2 ) );
-
-		$ids3 = $termIdsAcquirer->acquireTermIds( [
-			'label' => [ 'en' => 'the label' ],
-			'description' => [ 'en' => 'the description' ],
-		] );
-		$this->assertGreaterThan( max( max( $ids1 ), max( $ids2 ) ), min( $ids3 ) );
+		// Assert that the lowest new id is higher than the highest original id
+		$this->assertGreaterThan( max( $originalIds ), min( $newIds ) );
 	}
 
 	public function testCleanTerms_completelyCleansArray() {
