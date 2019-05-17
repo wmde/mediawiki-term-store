@@ -120,7 +120,7 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 		$this->assertGreaterThan( max( max( $ids1 ), max( $ids2 ) ), min( $ids3 ) );
 	}
 
-	public function testCleanTerms_completelyCleansArray() {
+	public function testHasTerms_returnsFalseAfterCleaningTerms() {
 		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
 
 		$ids = $termIdsAcquirer->acquireTermIds( [
@@ -137,6 +137,23 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 		$termIdsAcquirer->cleanTerms( $ids );
 
 		$this->assertFalse( $termIdsAcquirer->hasTerms() );
+	}
+
+	public function testHasTerms_returnsTrueAfterAcquiringTermIds() {
+		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
+
+		$ids = $termIdsAcquirer->acquireTermIds( [
+			'label' => [
+				'en' => 'the label',
+				'de' => 'die Bezeichnung',
+			],
+			'alias' => [
+				'en' => [ 'alias', 'another' ],
+			],
+			'description' => [ 'en' => 'the description' ],
+		] );
+
+		$this->assertTrue( $termIdsAcquirer->hasTerms() );
 	}
 
 	public function testCleanTerms_keepsOtherIds() {
