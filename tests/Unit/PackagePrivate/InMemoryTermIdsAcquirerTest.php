@@ -94,6 +94,43 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 		);
 	}
 
+	public function testResolveTermIds_returnsAcquiredTerms_butNotAllTerms() {
+		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
+
+		$termIds1 = $termIdsAcquirer->acquireTermIds( [
+			'label' => [
+				'en' => 'some label',
+				'de' => 'eine Beschriftung',
+			],
+		] );
+		$termIds2 = $termIdsAcquirer->acquireTermIds( [
+			'label' => [
+				'de' => 'eine Beschriftung',
+			],
+			'alias' => [
+				'de' => [ 'ein Alias', 'noch ein Alias' ],
+			],
+		] );
+
+		$terms1 = $termIdsAcquirer->resolveTermIds( $termIds1 );
+		$terms2 = $termIdsAcquirer->resolveTermIds( $termIds2 );
+
+		$this->assertSame( [
+			'label' => [
+				'en' => [ 'some label' ],
+				'de' => [ 'eine Beschriftung' ],
+			],
+		], $terms1 );
+		$this->assertSame( [
+			'label' => [
+				'de' => [ 'eine Beschriftung' ],
+			],
+			'alias' => [
+				'de' => [ 'ein Alias', 'noch ein Alias' ],
+			],
+		], $terms2 );
+	}
+
 	public function testCleanTerms_doesNotReuseIds() {
 		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
 
