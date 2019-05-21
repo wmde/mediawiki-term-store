@@ -46,4 +46,19 @@ class InMemoryTermIdsAcquirer implements TermIdsAcquirer, TermCleaner {
 		}
 	}
 
+	public function hasTerms() {
+		$empty = true;
+		// if there's any leaf element in terms then it's not empty, otherwise we consider
+		// the terms array empty even if it had some sub-arrays that are also empty by
+		// this definition
+		array_walk_recursive(
+			$this->terms,
+			function ( $element ) use ( &$empty ) {
+				$empty = false;
+			}
+		);
+
+		return !$empty;
+	}
+
 }
