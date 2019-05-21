@@ -27,7 +27,7 @@ class MediaWikiNormalizedTermCleanerTest extends MediaWikiTestCase {
 
 	protected function getSchemaOverrides( IMaintainableDatabase $db ) {
 		return [
-			'scripts' => [ TermStoreSchemaUpdater::getDdlSqlFilePath() ],
+			'scripts' => [ TermStoreSchemaUpdater::getSqlFileAbsolutePath() ],
 			'create' => [
 				'wbt_type',
 				'wbt_text',

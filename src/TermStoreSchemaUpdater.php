@@ -8,6 +8,10 @@ class TermStoreSchemaUpdater {
 
 	private $updater;
 
+	public static function getSqlFileAbsolutePath() {
+		return __DIR__ . '/PackagePrivate/AddNormalizedTermsTablesDDL.sql';
+	}
+
 	private function __construct( DatabaseUpdater $updater ) {
 		$this->updater = $updater;
 	}
@@ -16,14 +20,10 @@ class TermStoreSchemaUpdater {
 		( new self( $updater ) )->updateSchema();
 	}
 
-	public static function getDdlSqlFilePath() {
-		return __DIR__ . '/PackagePrivate/AddNormalizedTermsTablesDDL.sql';
-	}
-
 	private function updateSchema() {
 		$this->updater->addExtensionTable(
 			'wbt_item_terms',
-			self::getDdlSqlFilePath()
+			self::getSqlFileAbsolutePath()
 		);
 	}
 
