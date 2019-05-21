@@ -119,42 +119,6 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 		$this->assertGreaterThan( max( $originalIds ), min( $newIds ) );
 	}
 
-	public function testHasTerms_returnsFalseAfterCleaningTerms() {
-		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
-
-		$ids = $termIdsAcquirer->acquireTermIds( [
-			'label' => [
-				'en' => 'the label',
-				'de' => 'die Bezeichnung',
-			],
-			'alias' => [
-				'en' => [ 'alias', 'another' ],
-			],
-			'description' => [ 'en' => 'the description' ],
-		] );
-
-		$termIdsAcquirer->cleanTerms( $ids );
-
-		$this->assertFalse( $termIdsAcquirer->hasTerms() );
-	}
-
-	public function testHasTerms_returnsTrueAfterAcquiringTermIds() {
-		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
-
-		$ids = $termIdsAcquirer->acquireTermIds( [
-			'label' => [
-				'en' => 'the label',
-				'de' => 'die Bezeichnung',
-			],
-			'alias' => [
-				'en' => [ 'alias', 'another' ],
-			],
-			'description' => [ 'en' => 'the description' ],
-		] );
-
-		$this->assertTrue( $termIdsAcquirer->hasTerms() );
-	}
-
 	public function testCleanTerms_keepsOtherIds() {
 		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
 
