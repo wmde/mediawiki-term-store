@@ -4,6 +4,7 @@ namespace Wikibase\TermStore\MediaWiki\Tests\Integration\PackagePrivate\Util;
 
 use PHPUnit\Framework\TestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\Util\ReplicaMasterAwareRecordIdsAcquirer;
+use Wikibase\TermStore\MediaWiki\Tests\Util\FakeLoadBalancer;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\DatabaseSqlite;
 
@@ -134,8 +135,10 @@ class ReplicaMasterAwareRecordIdsAcquirerTest extends TestCase {
 
 	private function getTestSubjectInstance() {
 		return new ReplicaMasterAwareRecordIdsAcquirer(
-			$this->dbMaster,
-			$this->dbReplica,
+			new FakeLoadBalancer( [
+				'dbr' => $this->dbReplica,
+				'dbw' => $this->dbMaster,
+			] ),
 			self::TABLE_NAME,
 			self::ID_COLUMN
 		);

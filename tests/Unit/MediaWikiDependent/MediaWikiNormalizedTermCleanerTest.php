@@ -5,6 +5,7 @@ namespace Wikibase\TermStore\MediaWiki\Tests\Unit\MediaWikiDependent;
 use MediaWikiTestCase;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner;
 use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
+use Wikibase\TermStore\MediaWiki\Tests\Util\FakeLoadBalancer;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
@@ -38,10 +39,9 @@ class MediaWikiNormalizedTermCleanerTest extends MediaWikiTestCase {
 	}
 
 	private function getCleaner(): MediaWikiNormalizedTermCleaner {
-		$lb = $this->createMock( ILoadBalancer::class );
-		$lb->method( 'getConnection' )
-			->willReturn( $this->db );
-		return new MediaWikiNormalizedTermCleaner( $lb );
+		return new MediaWikiNormalizedTermCleaner( new FakeLoadBalancer( [
+			'dbr' => $this->db,
+		] ) );
 	}
 
 	public function testCleanupEverything() {
