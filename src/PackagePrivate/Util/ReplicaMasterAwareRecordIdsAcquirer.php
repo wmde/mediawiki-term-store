@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Allows acquiring ids of records in database table,
@@ -19,14 +20,19 @@ use Wikimedia\Rdbms\IDatabase;
 class ReplicaMasterAwareRecordIdsAcquirer {
 
 	/**
-	 * @var IDatabase $dbMaster
+	 * @var ILoadBalancer
 	 */
-	private $dbMaster;
+	private $loadBalancer;
 
 	/**
-	 * @var IDatabase $dbReplica
+	 * @var IDatabase $dbMaster master database to insert non-existing records into
 	 */
-	private $dbReplica;
+	private $dbMaster = null;
+
+	/**
+	 * @var IDatabase $dbReplica replica database to initially query existing records in
+	 */
+	private $dbReplica = null;
 
 	/**
 	 * @var string $table
@@ -44,21 +50,18 @@ class ReplicaMasterAwareRecordIdsAcquirer {
 	private $logger;
 
 	/**
-	 * @param IDatabase $dbMaster master database to insert non-existing records into
-	 * @param IDatabase $dbReplica replica database to initially query existing records in
+	 * @param ILoadBalancer $loadBalancer database connection accessor
 	 * @param string $table the name of the table this acquirer is for
 	 * @param string $idColumn the name of the column that contains the desired ids
 	 * @param LoggerInterface $logger
 	 */
 	public function __construct(
-		IDatabase $dbMaster,
-		IDatabase $dbReplica,
+		ILoadBalancer $loadBalancer,
 		$table,
 		$idColumn,
 		LoggerInterface $logger = null
 	) {
-		$this->dbMaster = $dbMaster;
-		$this->dbReplica = $dbReplica;
+		$this->loadBalancer = $loadBalancer;
 		$this->table = $table;
 		$this->idColumn = $idColumn;
 		$this->logger = $logger ?? new NullLogger();
@@ -96,10 +99,12 @@ class ReplicaMasterAwareRecordIdsAcquirer {
 	 *	]
 	 */
 	public function acquireIds( array $neededRecords ) {
+		$this->connectReplica();
 		$existingRecords = $this->findExistingRecords( $this->dbReplica, $neededRecords );
 		$neededRecords = $this->filterNonExistingRecords( $neededRecords, $existingRecords );
 
 		while ( !empty( $neededRecords ) ) {
+			$this->connectMaster();
 			$this->insertNonExistingRecordsIntoMaster( $neededRecords );
 			$existingRecords = array_merge(
 				$existingRecords,
@@ -109,6 +114,18 @@ class ReplicaMasterAwareRecordIdsAcquirer {
 		}
 
 		return $existingRecords;
+	}
+
+	private function connectReplica() {
+		if ( $this->dbReplica === null ) {
+			$this->dbReplica = $this->loadBalancer->getConnection( ILoadBalancer::DB_REPLICA );
+		}
+	}
+
+	private function connectMaster() {
+		if ( $this->dbMaster === null ) {
+			$this->dbMaster = $this->loadBalancer->getConnection( ILoadBalancer::DB_MASTER );
+		}
 	}
 
 	private function findExistingRecords( IDatabase $db, array $neededRecords ): array {

@@ -6,8 +6,10 @@ use PHPUnit\Framework\TestCase;
 use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\DatabaseTermIdsAcquirer;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTypeIdsAcquirer;
+use Wikibase\TermStore\MediaWiki\Tests\Util\FakeLoadBalancer;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\DatabaseSqlite;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 class DatabaseTermIdsAcquirerTest extends TestCase {
 
@@ -16,17 +18,24 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 	 */
 	private $db;
 
+	/**
+	 * @var ILoadBalancer
+	 */
+	private $loadBalancer;
+
 	public function setUp() {
 		$this->db = DatabaseSqlite::newStandaloneInstance( ':memory:' );
 		$this->db->sourceFile( TermStoreSchemaUpdater::getSqlFileAbsolutePath() );
+		$this->loadBalancer = new FakeLoadBalancer( [
+			'dbr' => $this->db,
+		] );
 	}
 
 	public function testAcquireTermIdsReturnsArrayOfIdsForAllTerms() {
 		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
-			$this->db,
-			$this->db,
+			$this->loadBalancer,
 			$typeIdsAcquirer
 		);
 
@@ -54,8 +63,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 		);
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
-			$this->db,
-			$this->db,
+			$this->loadBalancer,
 			$typeIdsAcquirer
 		);
 
@@ -79,8 +87,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
-			$this->db,
-			$this->db,
+			$this->loadBalancer,
 			$typeIdsAcquirer
 		);
 
@@ -107,8 +114,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
-			$this->db,
-			$this->db,
+			$this->loadBalancer,
 			$typeIdsAcquirer
 		);
 
@@ -135,8 +141,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
-			$this->db,
-			$this->db,
+			$this->loadBalancer,
 			$typeIdsAcquirer
 		);
 
@@ -208,8 +213,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 		$aliasEnSameTermInLangId = (string)$this->db->insertId();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
-			$this->db,
-			$this->db,
+			$this->loadBalancer,
 			$typeIdsAcquirer
 		);
 

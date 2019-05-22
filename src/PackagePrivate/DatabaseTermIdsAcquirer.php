@@ -6,6 +6,7 @@ use AppendIterator;
 use ArrayIterator;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\Util\ReplicaMasterAwareRecordIdsAcquirer;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 class DatabaseTermIdsAcquirer implements TermIdsAcquirer {
 
@@ -14,22 +15,20 @@ class DatabaseTermIdsAcquirer implements TermIdsAcquirer {
 	const TABLE_TERM_IN_LANG = 'wbt_term_in_lang';
 
 	/**
-	 * @var Database $dbw
+	 * @var ILoadBalancer
 	 */
-	private $dbw;
+	private $loadBalancer;
 
 	/**
-	 * @var Database $dbr
+	 * @var TypeIdsAcquirer
 	 */
-	private $dbr;
+	private $typeIdsAcquirer;
 
 	public function __construct(
-		IDatabase $dbw,
-		IDatabase $dbr,
+		ILoadBalancer $loadBalancer,
 		TypeIdsAcquirer $typeIdsAcquirer
 	) {
-		$this->dbw = $dbw;
-		$this->dbr = $dbr;
+		$this->loadBalancer = $loadBalancer;
 		$this->typeIdsAcquirer = $typeIdsAcquirer;
 	}
 
@@ -105,7 +104,7 @@ class DatabaseTermIdsAcquirer implements TermIdsAcquirer {
 
 	private function acquireTextIds( array $texts ) {
 		$textIdsAcquirer = new ReplicaMasterAwareRecordIdsAcquirer(
-			$this->dbw, $this->dbr, 'wbt_text', 'wbx_id' );
+			$this->loadBalancer, 'wbt_text', 'wbx_id' );
 
 		$textRecords = [];
 		foreach ( $texts as $text ) {
@@ -174,7 +173,7 @@ class DatabaseTermIdsAcquirer implements TermIdsAcquirer {
 
 	private function acquireTextInLangIds( array $langTextIds ) {
 		$textInLangIdsAcquirer = new ReplicaMasterAwareRecordIdsAcquirer(
-			$this->dbw, $this->dbr, 'wbt_text_in_lang', 'wbxl_id' );
+			$this->loadBalancer, 'wbt_text_in_lang', 'wbxl_id' );
 
 		$textInLangRecords = [];
 		foreach ( $langTextIds as $lang => $textIds ) {
@@ -240,7 +239,7 @@ class DatabaseTermIdsAcquirer implements TermIdsAcquirer {
 
 	private function acquireTermInLangIds( array $typeTextInLangIds ) {
 		$termInLangIdsAcquirer = new ReplicaMasterAwareRecordIdsAcquirer(
-			$this->dbw, $this->dbr, 'wbt_term_in_lang', 'wbtl_id' );
+			$this->loadBalancer, 'wbt_term_in_lang', 'wbtl_id' );
 
 		$termInLangRecords = [];
 		foreach ( $typeTextInLangIds as $typeId => $textInLangIds ) {
