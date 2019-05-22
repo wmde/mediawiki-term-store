@@ -5,7 +5,7 @@ namespace Wikibase\TermStore\MediaWiki\PackagePrivate;
 /**
  * Acquires unique and constant ids of types, stored in memory.
  */
-class InMemoryTypeIdsAcquirer implements TypeIdsAcquirer {
+class InMemoryTypeIdsAcquirer implements TypeIdsAcquirer, TypeIdsResolver {
 	private $types = [];
 	private $lastId = 0;
 
@@ -19,5 +19,15 @@ class InMemoryTypeIdsAcquirer implements TypeIdsAcquirer {
 		}
 
 		return $ids;
+	}
+
+	public function resolveTypeIds( array $typeIds ): array {
+		$types = [];
+		foreach ( $this->types as $typeName => $typeId ) {
+			if ( in_array( $typeId, $typeIds ) ) {
+				$types[$typeId] = $typeName;
+			}
+		}
+		return $types;
 	}
 }
