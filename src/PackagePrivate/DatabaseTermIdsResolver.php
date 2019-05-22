@@ -27,9 +27,6 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	/** @var IDatabase */
 	private $dbw = null;
 
-	/** @var string[] stash of data returned from the {@link TypeIdsResolver} */
-	private $typeNames = [];
-
 	public function __construct(
 		TypeIdsResolver $typeIdsResolver,
 		ILoadBalancer $lb
@@ -52,21 +49,21 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 		$this->connectDbr();
 
 		$replicaResult = $this->selectTerms( $this->dbr, $termIds );
-		$this->preloadTypes( $replicaResult );
+		$types = $this->loadTypes( $replicaResult );
 		$replicaTermIds = [];
 
 		foreach ( $replicaResult as $row ) {
 			$replicaTermIds[] = $row->wbtl_id;
-			$this->addResultTerms( $terms, $row );
+			$this->addResultTerms( $terms, $row, $types );
 		}
 
 		if ( count( $replicaTermIds ) !== count( $termIds ) ) {
 			$masterTermIds = array_values( array_diff( $termIds, $replicaTermIds ) );
 			$this->connectDbw();
 			$masterResult = $this->selectTerms( $this->dbw, $masterTermIds );
-			$this->preloadTypes( $masterResult );
+			$types += $this->loadTypes( $masterResult );
 			foreach ( $masterResult as $row ) {
-				$this->addResultTerms( $terms, $row );
+				$this->addResultTerms( $terms, $row, $types );
 			}
 		}
 
@@ -87,31 +84,26 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 		);
 	}
 
-	private function preloadTypes( IResultWrapper $result ) {
+	private function loadTypes( IResultWrapper $result ) {
 		$typeIds = [];
 		foreach ( $result as $row ) {
-			$typeId = $row->wbtl_type_id;
-			if ( !array_key_exists( $typeId, $this->typeNames ) ) {
-				$typeIds[$typeId] = true;
-			}
+			$typeIds[] = $row->wbtl_type_id;
 		}
-		$this->typeNames += $this->typeIdsResolver->resolveTypeIds( array_keys( $typeIds ) );
+		return $this->typeIdsResolver->resolveTypeIds( $typeIds );
 	}
 
-	private function addResultTerms( array &$terms, stdClass $row ) {
-		$type = $this->lookupType( $row->wbtl_type_id );
+	private function addResultTerms( array &$terms, stdClass $row, array $types ) {
+		$typeId = $row->wbtl_type_id;
+		if ( !isset( $types[$typeId] ) ) {
+			throw new InvalidArgumentException(
+				'Type ID ' . $typeId . ' was not found!' );
+		}
+
+		$type = $types[$typeId];
 		$lang = $row->wbxl_language;
 		$text = $row->wbx_text;
-		$terms[$type][$lang][] = $text;
-	}
 
-	private function lookupType( $typeId ) {
-		$typeName = $this->typeNames[$typeId] ?? null;
-		if ( $typeName === null ) {
-			throw new InvalidArgumentException(
-				'Type ID ' . $typeId . ' was requested but not preloaded!' );
-		}
-		return $typeName;
+		$terms[$type][$lang][] = $text;
 	}
 
 	private function connectDbr() {
