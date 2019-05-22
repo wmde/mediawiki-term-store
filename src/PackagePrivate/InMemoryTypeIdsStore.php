@@ -3,9 +3,9 @@
 namespace Wikibase\TermStore\MediaWiki\PackagePrivate;
 
 /**
- * Acquires unique and constant ids of types, stored in memory.
+ * Acquires and resolves unique and constant ids of types, stored in memory.
  */
-class InMemoryTypeIdsAcquirer implements TypeIdsAcquirer, TypeIdsResolver {
+class InMemoryTypeIdsStore implements TypeIdsAcquirer, TypeIdsResolver {
 	private $types = [];
 	private $lastId = 0;
 

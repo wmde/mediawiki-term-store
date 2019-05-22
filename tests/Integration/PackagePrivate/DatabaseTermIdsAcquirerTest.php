@@ -5,7 +5,7 @@ namespace Wikibase\TermStore\MediaWiki\Tests\Unit\PackagePrivate;
 use PHPUnit\Framework\TestCase;
 use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\DatabaseTermIdsAcquirer;
-use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTypeIdsAcquirer;
+use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTypeIdsStore;
 use Wikibase\TermStore\MediaWiki\Tests\Util\FakeLoadBalancer;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\DatabaseSqlite;
@@ -32,7 +32,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testAcquireTermIdsReturnsArrayOfIdsForAllTerms() {
-		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
+		$typeIdsAcquirer = new InMemoryTypeIdsStore();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
 			$this->loadBalancer,
@@ -57,7 +57,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testAcquireTermIdsStoresTermsInDatabase() {
-		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
+		$typeIdsAcquirer = new InMemoryTypeIdsStore();
 		$alreadyAcquiredTypeIds = $typeIdsAcquirer->acquireTypeIds(
 			[ 'label', 'description', 'alias' ]
 		);
@@ -84,7 +84,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testAcquireTermIdsStoresOnlyUniqueTexts() {
-		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
+		$typeIdsAcquirer = new InMemoryTypeIdsStore();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
 			$this->loadBalancer,
@@ -111,7 +111,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testAcquireTermIdsStoresOnlyUniqueTextInLang() {
-		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
+		$typeIdsAcquirer = new InMemoryTypeIdsStore();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
 			$this->loadBalancer,
@@ -138,7 +138,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testAcquireTermIdsStoresOnlyUniqueTermInLang() {
-		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
+		$typeIdsAcquirer = new InMemoryTypeIdsStore();
 
 		$dbTermIdsAcquirer = new DatabaseTermIdsAcquirer(
 			$this->loadBalancer,
@@ -184,7 +184,7 @@ class DatabaseTermIdsAcquirerTest extends TestCase {
 		// termsArray above, meaning thoese pre-inserted terms will
 		// appear (their ids) in the returned array from
 		// TermIdsAcquirer::acquireTermIds( $termsArray )
-		$typeIdsAcquirer = new InMemoryTypeIdsAcquirer();
+		$typeIdsAcquirer = new InMemoryTypeIdsStore();
 		$alreadyAcquiredTypeIds = $typeIdsAcquirer->acquireTypeIds(
 			[ 'label', 'description', 'alias' ]
 		);

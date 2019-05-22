@@ -3,15 +3,15 @@
 namespace Wikibase\TermStore\MediaWiki\Tests\Unit\PackagePrivate;
 
 use PHPUnit\Framework\TestCase;
-use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer;
+use Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsStore;
 
 /**
- * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsAcquirer
+ * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\InMemoryTermIdsStore
  */
-class InMemoryTermIdsAcquirerTest extends TestCase {
+class InMemoryTermIdsStoreTest extends TestCase {
 
 	public function testAcquiresUniqueIdsForNonExistingTerms() {
-		$termsIdsAcquirer = new InMemoryTermIdsAcquirer();
+		$termsIdsAcquirer = new InMemoryTermIdsStore();
 
 		$ids = $termsIdsAcquirer->acquireTermIds( [
 			'label' => [
@@ -28,7 +28,7 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testReusesIdsOfExistingTerms() {
-		$termsIdsAcquirer = new InMemoryTermIdsAcquirer();
+		$termsIdsAcquirer = new InMemoryTermIdsStore();
 
 		$previouslyAcquiredIds = $termsIdsAcquirer->acquireTermIds( [
 			'label' => [
@@ -59,7 +59,7 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testAcquiresAndReusesIdsForNewAndExistingTerms() {
-		$termsIdsAcquirer = new InMemoryTermIdsAcquirer();
+		$termsIdsAcquirer = new InMemoryTermIdsStore();
 
 		$previouslyAcquiredIds = $termsIdsAcquirer->acquireTermIds( [
 			'label' => [
@@ -95,15 +95,15 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testResolveTermIds_returnsAcquiredTerms_butNotAllTerms() {
-		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
+		$termIdsStore = new InMemoryTermIdsStore();
 
-		$termIds1 = $termIdsAcquirer->acquireTermIds( [
+		$termIds1 = $termIdsStore->acquireTermIds( [
 			'label' => [
 				'en' => 'some label',
 				'de' => 'eine Beschriftung',
 			],
 		] );
-		$termIds2 = $termIdsAcquirer->acquireTermIds( [
+		$termIds2 = $termIdsStore->acquireTermIds( [
 			'label' => [
 				'de' => 'eine Beschriftung',
 			],
@@ -112,8 +112,8 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 			],
 		] );
 
-		$terms1 = $termIdsAcquirer->resolveTermIds( $termIds1 );
-		$terms2 = $termIdsAcquirer->resolveTermIds( $termIds2 );
+		$terms1 = $termIdsStore->resolveTermIds( $termIds1 );
+		$terms2 = $termIdsStore->resolveTermIds( $termIds2 );
 
 		$this->assertSame( [
 			'label' => [
@@ -132,9 +132,9 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testCleanTerms_doesNotReuseIds() {
-		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
+		$termIdsStore = new InMemoryTermIdsStore();
 
-		$originalIds = $termIdsAcquirer->acquireTermIds( [
+		$originalIds = $termIdsStore->acquireTermIds( [
 			'label' => [
 				'en' => 'the label',
 				'de' => 'die Bezeichnung',
@@ -145,9 +145,9 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 			'description' => [ 'en' => 'the description' ],
 		] );
 
-		$termIdsAcquirer->cleanTerms( $originalIds );
+		$termIdsStore->cleanTerms( $originalIds );
 
-		$newIds = $termIdsAcquirer->acquireTermIds( [
+		$newIds = $termIdsStore->acquireTermIds( [
 			'label' => [ 'en' => 'the label' ],
 			'description' => [ 'en' => 'the description' ],
 		] );
@@ -157,9 +157,9 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 	}
 
 	public function testCleanTerms_keepsOtherIds() {
-		$termIdsAcquirer = new InMemoryTermIdsAcquirer();
+		$termIdsStore = new InMemoryTermIdsStore();
 
-		$acquiredIds = $termIdsAcquirer->acquireTermIds( [
+		$acquiredIds = $termIdsStore->acquireTermIds( [
 			'label' => [
 				'en' => 'id 1',
 				'de' => 'id 2',
@@ -170,11 +170,11 @@ class InMemoryTermIdsAcquirerTest extends TestCase {
 			'description' => [ 'en' => 'id 4' ],
 		] );
 
-		$termIdsAcquirer->cleanTerms( [ $acquiredIds[1], $acquiredIds[2] ] );
+		$termIdsStore->cleanTerms( [ $acquiredIds[1], $acquiredIds[2] ] );
 
 		$this->assertSame(
 			[ $acquiredIds[0], $acquiredIds[3] ],
-			$termIdsAcquirer->acquireTermIds( [
+			$termIdsStore->acquireTermIds( [
 				'label' => [ 'en' => 'id 1' ],
 				'description' => [ 'en' => 'id 4' ],
 			] )

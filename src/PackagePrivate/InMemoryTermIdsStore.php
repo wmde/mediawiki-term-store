@@ -2,7 +2,7 @@
 
 namespace Wikibase\TermStore\MediaWiki\PackagePrivate;
 
-class InMemoryTermIdsAcquirer implements TermIdsAcquirer, TermIdsResolver, TermCleaner {
+class InMemoryTermIdsStore implements TermIdsAcquirer, TermIdsResolver, TermCleaner {
 
 	private $terms = [];
 	private $lastId = 0;
