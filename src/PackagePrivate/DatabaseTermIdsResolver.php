@@ -49,9 +49,8 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	 */
 	public function resolveTermIds( array $termIds ): array {
 		$terms = [];
-		$this->connectDbr();
 
-		$replicaResult = $this->selectTerms( $this->dbr, $termIds );
+		$replicaResult = $this->selectTerms( $this->getDbr(), $termIds );
 		$this->preloadTypes( $replicaResult );
 		$replicaTermIds = [];
 
@@ -62,8 +61,7 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 
 		if ( count( $replicaTermIds ) !== count( $termIds ) ) {
 			$masterTermIds = array_values( array_diff( $termIds, $replicaTermIds ) );
-			$this->connectDbw();
-			$masterResult = $this->selectTerms( $this->dbw, $masterTermIds );
+			$masterResult = $this->selectTerms( $this->getDbw(), $masterTermIds );
 			$this->preloadTypes( $masterResult );
 			foreach ( $masterResult as $row ) {
 				$this->addResultTerms( $terms, $row );
@@ -114,16 +112,20 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 		return $typeName;
 	}
 
-	private function connectDbr() {
+	private function getDbr() {
 		if ( $this->dbr === null ) {
 			$this->dbr = $this->lb->getConnection( ILoadBalancer::DB_REPLICA );
 		}
+
+		return $this->dbr;
 	}
 
-	private function connectDbw() {
+	private function getDbw() {
 		if ( $this->dbw === null ) {
 			$this->dbw = $this->lb->getConnection( ILoadBalancer::DB_MASTER );
 		}
+
+		return $this->dbw;
 	}
 
 }
