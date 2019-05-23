@@ -85,16 +85,14 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	private function loadTypes( IResultWrapper $result ) {
 		$typeIds = [];
 		foreach ( $result as $row ) {
-      if ( !( $typeIds[$row->wbtl_type_id] ?? false ) ) {
-				$typeIds[$row->wbtl_type_id] = true;
-      }
+			$typeIds[$row->wbtl_type_id] = true;
 		}
 		return $this->typeIdsResolver->resolveTypeIds( array_keys( $typeIds ) );
 	}
 
 	private function addResultTerms( array &$terms, stdClass $row, array $types ) {
 		$typeId = $row->wbtl_type_id;
-    $type = $types[$typeId] ?? null;
+		$type = $types[$typeId] ?? null;
 		if ( $type === null ) {
 			throw new InvalidArgumentException(
 				'Type ID ' . $typeId . ' was not found!' );
