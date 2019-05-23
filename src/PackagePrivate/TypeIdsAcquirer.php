@@ -18,6 +18,6 @@ interface TypeIdsAcquirer {
 	 *		$typeIdsAcquirer->acquireTypeIds ( [ 'label', 'description' ] ) would return:
 	 *		[ 'label' => 100, 'description' => 'b48a96cd-c644-4230-811f-cc152dac8455' ]
 	 */
-	public function acquireTypeIds( $types );
+	public function acquireTypeIds( array $types ): array;
 
 }
