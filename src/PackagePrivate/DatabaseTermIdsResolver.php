@@ -46,9 +46,8 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	 */
 	public function resolveTermIds( array $termIds ): array {
 		$terms = [];
-		$this->connectDbr();
 
-		$replicaResult = $this->selectTerms( $this->dbr, $termIds );
+		$replicaResult = $this->selectTerms( $this->getDbr(), $termIds );
 		$types = $this->loadTypes( $replicaResult );
 		$replicaTermIds = [];
 
@@ -59,8 +58,7 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 
 		if ( count( $replicaTermIds ) !== count( $termIds ) ) {
 			$masterTermIds = array_values( array_diff( $termIds, $replicaTermIds ) );
-			$this->connectDbw();
-			$masterResult = $this->selectTerms( $this->dbw, $masterTermIds );
+			$masterResult = $this->selectTerms( $this->getDbw(), $masterTermIds );
 			$types += $this->loadTypes( $masterResult );
 			foreach ( $masterResult as $row ) {
 				$this->addResultTerms( $terms, $row, $types );
@@ -87,35 +85,41 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	private function loadTypes( IResultWrapper $result ) {
 		$typeIds = [];
 		foreach ( $result as $row ) {
-			$typeIds[] = $row->wbtl_type_id;
+      if ( !( $typeIds[$row->wbtl_type_id] ?? false ) ) {
+				$typeIds[$row->wbtl_type_id] = true;
+      }
 		}
-		return $this->typeIdsResolver->resolveTypeIds( $typeIds );
+		return $this->typeIdsResolver->resolveTypeIds( array_keys( $typeIds ) );
 	}
 
 	private function addResultTerms( array &$terms, stdClass $row, array $types ) {
 		$typeId = $row->wbtl_type_id;
-		if ( !isset( $types[$typeId] ) ) {
+    $type = $types[$typeId] ?? null;
+		if ( $type === null ) {
 			throw new InvalidArgumentException(
 				'Type ID ' . $typeId . ' was not found!' );
 		}
 
-		$type = $types[$typeId];
 		$lang = $row->wbxl_language;
 		$text = $row->wbx_text;
 
 		$terms[$type][$lang][] = $text;
 	}
 
-	private function connectDbr() {
+	private function getDbr() {
 		if ( $this->dbr === null ) {
 			$this->dbr = $this->lb->getConnection( ILoadBalancer::DB_REPLICA );
 		}
+
+		return $this->dbr;
 	}
 
-	private function connectDbw() {
+	private function getDbw() {
 		if ( $this->dbw === null ) {
 			$this->dbw = $this->lb->getConnection( ILoadBalancer::DB_MASTER );
 		}
+
+		return $this->dbw;
 	}
 
 }
