@@ -4,6 +4,8 @@ namespace Wikibase\TermStore\MediaWiki\PackagePrivate;
 
 use InvalidArgumentException;
 use LogicException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use stdClass;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -25,6 +27,9 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	/** @var bool */
 	private $allowMasterFallback;
 
+	/** @var LoggerInterface */
+	private $logger;
+
 	/** @var IDatabase */
 	private $dbr = null;
 
@@ -43,11 +48,13 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	public function __construct(
 		TypeIdsResolver $typeIdsResolver,
 		ILoadBalancer $lb,
-		$allowMasterFallback = false
+		$allowMasterFallback = false,
+		LoggerInterface $logger = null
 	) {
 		$this->typeIdsResolver = $typeIdsResolver;
 		$this->lb = $lb;
 		$this->allowMasterFallback = $allowMasterFallback;
+		$this->logger = $logger ?: new NullLogger();
 	}
 
 	/*
@@ -62,6 +69,13 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 	public function resolveTermIds( array $termIds ): array {
 		$terms = [];
 
+		$this->logger->debug(
+			'{method}: getting {termCount} rows from replica',
+			[
+				'method' => __METHOD__,
+				'termCount' => count( $termIds ),
+			]
+		);
 		$replicaResult = $this->selectTerms( $this->getDbr(), $termIds );
 		$this->preloadTypes( $replicaResult );
 		$replicaTermIds = [];
@@ -72,6 +86,15 @@ class DatabaseTermIdsResolver implements TermIdsResolver {
 		}
 
 		if ( $this->allowMasterFallback && count( $replicaTermIds ) !== count( $termIds ) ) {
+			$this->logger->info(
+				'{method}: replica only returned {replicaCount} out of {termCount} rows, ' .
+					'falling back to master',
+				[
+					'method' => __METHOD__,
+					'replicaCount' => count( $replicaTermIds ),
+					'termCount' => count( $termIds ),
+				]
+			);
 			$masterTermIds = array_values( array_diff( $termIds, $replicaTermIds ) );
 			$masterResult = $this->selectTerms( $this->getDbw(), $masterTermIds );
 			$this->preloadTypes( $masterResult );

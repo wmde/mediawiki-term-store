@@ -3,6 +3,8 @@
 namespace Wikibase\TermStore\MediaWiki\Tests\Integration\PackagePrivate;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\DatabaseTermIdsResolver;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\StaticTypeIdsStore;
 use Wikibase\TermStore\MediaWiki\PackagePrivate\TypeIdsResolver;
@@ -218,6 +220,37 @@ class DatabaseTermIdsResolverTest extends TestCase {
 				'en' => [ 'text' ],
 			],
 		], $terms );
+	}
+
+	public function testLogsInfoOnFallbackToMaster() {
+		$dbr = $this->db;
+		$dbw = DatabaseSqlite::newStandaloneInstance( ':memory:' );
+		$dbw->sourceFile( TermStoreSchemaUpdater::getSqlFileAbsolutePath() );
+		// only master has any data
+		$dbw->insert( 'wbt_text',
+			[ 'wbx_text' => 'text' ] );
+		$textId = $dbw->insertId();
+		$dbw->insert( 'wbt_text_in_lang',
+			[ 'wbxl_language' => 'en', 'wbxl_text_id' => $textId ] );
+		$textInLangId = $dbw->insertId();
+		$dbw->insert( 'wbt_term_in_lang',
+			[ 'wbtl_type_id' => self::TYPE_LABEL, 'wbtl_text_in_lang_id' => $textInLangId ] );
+		$termInLangId = $dbw->insertId();
+
+		$logger = $this->createMock( AbstractLogger::class );
+		$logger->expects( $this->atLeastOnce() )
+			->method( 'info' );
+
+		$resolver = new DatabaseTermIdsResolver(
+			$this->typeIdsResolver,
+			new FakeLoadBalancer( [
+				'dbr' => $dbr,
+				'dbw' => $dbw,
+			] ),
+			true,
+			$logger
+		);
+		$resolver->resolveTermIds( [ $termInLangId ] );
 	}
 
 }
