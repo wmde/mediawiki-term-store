@@ -15,7 +15,7 @@ use Wikimedia\Rdbms\ILoadBalancer;
  *
  * @license GPL-2.0-or-later
  */
-class MediaWikiNormalizedTermCleaner implements TermCleaner {
+class DatabaseTermCleaner implements TermCleaner {
 
 	/** @var ILoadBalancer */
 	private $lb;

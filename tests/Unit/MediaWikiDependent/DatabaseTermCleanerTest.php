@@ -3,20 +3,20 @@
 namespace Wikibase\TermStore\MediaWiki\Tests\Unit\MediaWikiDependent;
 
 use MediaWikiTestCase;
-use Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner;
+use Wikibase\TermStore\MediaWiki\PackagePrivate\DatabaseTermCleaner;
 use Wikibase\TermStore\MediaWiki\TermStoreSchemaUpdater;
 use Wikibase\TermStore\MediaWiki\Tests\Util\FakeLoadBalancer;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
- * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\MediaWikiNormalizedTermCleaner
+ * @covers \Wikibase\TermStore\MediaWiki\PackagePrivate\DatabaseTermCleaner
  *
  * @group Database
  *
  * @license GPL-2.0-or-later
  */
-class MediaWikiNormalizedTermCleanerTest extends MediaWikiTestCase {
+class DatabaseTermCleanerTest extends MediaWikiTestCase {
 
 	protected function setUp() {
 		parent::setUp();
@@ -38,8 +38,8 @@ class MediaWikiNormalizedTermCleanerTest extends MediaWikiTestCase {
 		];
 	}
 
-	private function getCleaner(): MediaWikiNormalizedTermCleaner {
-		return new MediaWikiNormalizedTermCleaner( new FakeLoadBalancer( [
+	private function getCleaner(): DatabaseTermCleaner {
+		return new DatabaseTermCleaner( new FakeLoadBalancer( [
 			'dbr' => $this->db,
 		] ) );
 	}
